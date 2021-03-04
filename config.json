@@ -1,0 +1,8 @@
+{
+  "plugins": [
+    {
+      "name": "Biowasm",
+      "url": "http://localhost:9000/dist/jbrowse-plugin-biowasm.umd.development.js"
+    }
+  ]
+}
