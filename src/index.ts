@@ -18,7 +18,8 @@ import { version } from '../package.json'
 import { parseCigar, getMismatches } from './MismatchParser'
 
 function locstr(query: Region) {
-  return `${query.refName}:${query.start}-${query.end}`
+  // samtools takes 1-based coordinates
+  return `${query.refName}:${query.start + 1}-${query.end}`
 }
 const configSchema = ConfigurationSchema(
   'BiowasmAdapter',
@@ -124,8 +125,8 @@ class AdapterClass extends BaseFeatureDataAdapter {
             ...tags
           ] = row.split('\t')
           let MD = tags.find(tag => tag.startsWith('MD'))
-          if (MD) MD = MD.replace('MD:', '')
-          const start = +startStr
+          if (MD) MD = MD.replace('MD:Z:', '')
+          const start = +startStr - 1
           const flags = +flagStr
           const cigarOps = parseCigar(CIGAR)
           let length = 0
