@@ -4,5 +4,73 @@
       "name": "Biowasm",
       "url": "http://localhost:9000/dist/jbrowse-plugin-biowasm.umd.development.js"
     }
+  ],
+  "assemblies": [
+    {
+      "name": "hg19",
+      "aliases": ["GRCh37"],
+      "sequence": {
+        "type": "ReferenceSequenceTrack",
+        "trackId": "Pd8Wh30ei9R",
+        "adapter": {
+          "type": "BgzipFastaAdapter",
+          "fastaLocation": {
+            "uri": "https://jbrowse.org/genomes/hg19/fasta/hg19.fa.gz"
+          },
+          "faiLocation": {
+            "uri": "https://jbrowse.org/genomes/hg19/fasta/hg19.fa.gz.fai"
+          },
+          "gziLocation": {
+            "uri": "https://jbrowse.org/genomes/hg19/fasta/hg19.fa.gz.gzi"
+          }
+        }
+      },
+      "refNameAliases": {
+        "adapter": {
+          "type": "RefNameAliasAdapter",
+          "location": {
+            "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/hg19_aliases.txt"
+          }
+        }
+      }
+    }
+  ],
+  "tracks": [
+    {
+      "type": "FeatureTrack",
+      "trackId": "hg00096_highcov",
+      "name": "HG00096 Illumina high-cov",
+      "assemblyNames": ["hg19"],
+      "category": ["Annotation"],
+      "adapter": {
+        "type": "BiowasmAdapter",
+        "bamLocation": {
+          "uri": "https://s3.amazonaws.com/1000genomes/phase3/data/HG00096/high_coverage_alignment/HG00096.wgs.ILLUMINA.bwa.GBR.high_cov_pcr_free.20140203.bam"
+        },
+        "index": {
+          "location": {
+            "uri": "https://s3.amazonaws.com/1000genomes/phase3/data/HG00096/high_coverage_alignment/HG00096.wgs.ILLUMINA.bwa.GBR.high_cov_pcr_free.20140203.bam.bai"
+          }
+        }
+      }
+    },
+    {
+      "type": "FeatureTrack",
+      "trackId": "hg00096_lowcov",
+      "name": "HG00096 Illumina low-cov",
+      "assemblyNames": ["hg19"],
+      "category": ["Annotation"],
+      "adapter": {
+        "type": "BiowasmAdapter",
+        "bamLocation": {
+          "uri": "https://s3.amazonaws.com/1000genomes/phase3/data/HG00096/alignment/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20120522.bam"
+        },
+        "index": {
+          "location": {
+            "uri": "https://s3.amazonaws.com/1000genomes/phase3/data/HG00096/alignment/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20120522.bam.bai"
+          }
+        }
+      }
+    }
   ]
 }
