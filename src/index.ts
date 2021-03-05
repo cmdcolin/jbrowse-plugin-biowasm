@@ -18,6 +18,9 @@ function parseCigar(cigar: string) {
   return (cigar || '').split(/([MIDNSHPX=])/)
 }
 
+function locstr(query: Region) {
+  return `${query.refName}:${query.start}-${query.end}`
+}
 const configSchema = ConfigurationSchema(
   'BiowasmAdapter',
   {
@@ -56,33 +59,35 @@ function getAdapterClass(pluginManager: PluginManager) {
       this.config = config
     }
 
-    async setup() {
+    // setupSamtools in a way where multiple invocations gets a cached version
+    async setupSamtools() {
       if (!this.samtools) {
         const samtools = new Aioli('samtools/1.10')
-        await samtools.init()
-        this.samtools = samtools
+        this.samtools = new Promise(async resolve => {
+          await samtools.init()
+          resolve(samtools)
+        })
       }
       return this.samtools
     }
 
-    async mountFile() {
+    // setup everything in a way where multiple invocations gets a cached version
+    async setup() {
+      await this.setupSamtools()
       if (!this.mountedFiles) {
-        await this.setup()
-        const bam = readConfObject(this.config, 'bamLocation')
-        const bai = readConfObject(this.config, ['index', 'location'])
-        const mountedBai = await Aioli.mount(bai.uri)
-        const mountedBam = await Aioli.mount(bam.uri)
-        this.mountedFiles = { mountedBam, mountedBai }
+        // set it to not undefined to start
+        this.mountedFiles = Promise.all([
+          Aioli.mount(readConfObject(this.config, 'bamLocation').uri),
+          Aioli.mount(readConfObject(this.config, ['index', 'location']).uri),
+        ])
       }
       return this.mountedFiles
     }
 
     public async getRefNames(_: BaseOptions = {}) {
-      const samtools = await this.setup()
-      const { mountedBam } = await this.mountFile()
-      const { stdout, stderr } = await samtools.exec(
-        `view ${mountedBam.path} -H`,
-      )
+      const samtools = await this.setupSamtools()
+      const [bamFile] = await this.setup()
+      const { stdout, stderr } = await samtools.exec(`view ${bamFile.path} -H`)
       if (stdout === '' && stderr !== '') {
         throw new Error(stderr)
       }
@@ -97,10 +102,10 @@ function getAdapterClass(pluginManager: PluginManager) {
 
     public getFeatures(query: Region, opts: BaseOptions = {}) {
       return ObservableCreate<Feature>(async observer => {
-        const samtools = await this.setup()
-        const { mountedBam } = await this.mountFile()
+        const samtools = await this.setupSamtools()
+        const [bamFile] = await this.setup()
         const readData = await samtools.exec(
-          `view ${mountedBam.path} ${query.refName}:${query.start}-${query.end}`,
+          `view ${bamFile.path} ${locstr(query)}`,
         )
 
         if (readData && !readData.stdout) {
@@ -111,9 +116,9 @@ function getAdapterClass(pluginManager: PluginManager) {
           .split('\n')
           .filter(f => !!f)
           .forEach(row => {
-            const [, flagString, , startString, , CIGAR] = row.split('\t')
-            const start = +startString
-            const flags = +flagString
+            const [, flagStr, refName, startStr, , CIGAR] = row.split('\t')
+            const start = +startStr
+            const flags = +flagStr
             const cigarOps = parseCigar(CIGAR)
             let length = 0
             for (let i = 0; i < cigarOps.length; i += 2) {
@@ -126,8 +131,11 @@ function getAdapterClass(pluginManager: PluginManager) {
 
             observer.next(
               new SimpleFeature({
-                start: start,
+                refName,
+                start,
                 end: start + length,
+                strand: flags & 16 ? -1 : 1,
+                mismatches: [],
                 CIGAR,
                 flags,
                 uniqueId: row,

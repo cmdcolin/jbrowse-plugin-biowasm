@@ -37,7 +37,7 @@
   ],
   "tracks": [
     {
-      "type": "FeatureTrack",
+      "type": "AlignmentsTrack",
       "trackId": "hg00096_highcov",
       "name": "HG00096 Illumina high-cov",
       "assemblyNames": ["hg19"],
@@ -55,7 +55,7 @@
       }
     },
     {
-      "type": "FeatureTrack",
+      "type": "AlignmentsTrack",
       "trackId": "hg00096_lowcov",
       "name": "HG00096 Illumina low-cov",
       "assemblyNames": ["hg19"],
