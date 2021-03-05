@@ -39,7 +39,7 @@
     {
       "type": "AlignmentsTrack",
       "trackId": "hg00096_highcov",
-      "name": "HG00096 Illumina high-cov",
+      "name": "HG00096 Illumina high coverage (biowasm)",
       "assemblyNames": ["hg19"],
       "category": ["Annotation"],
       "adapter": {
@@ -57,11 +57,59 @@
     {
       "type": "AlignmentsTrack",
       "trackId": "hg00096_lowcov",
-      "name": "HG00096 Illumina low-cov",
+      "name": "HG00096 Illumina low coverage (normal)",
       "assemblyNames": ["hg19"],
       "category": ["Annotation"],
       "adapter": {
         "type": "BiowasmAdapter",
+        "bamLocation": {
+          "uri": "https://s3.amazonaws.com/1000genomes/phase3/data/HG00096/alignment/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20120522.bam"
+        },
+        "index": {
+          "location": {
+            "uri": "https://s3.amazonaws.com/1000genomes/phase3/data/HG00096/alignment/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20120522.bam.bai"
+          }
+        }
+      }
+    },
+    {
+      "type": "AlignmentsTrack",
+      "trackId": "hg00096_highcov_bam",
+      "name": "HG00096 Illumina high coverage (normal)",
+      "assemblyNames": ["hg19"],
+      "category": ["1000 genomes"],
+      "adapter": {
+        "type": "BamAdapter",
+        "bamLocation": {
+          "uri": "https://s3.amazonaws.com/1000genomes/phase3/data/HG00096/high_coverage_alignment/HG00096.wgs.ILLUMINA.bwa.GBR.high_cov_pcr_free.20140203.bam"
+        },
+        "index": {
+          "location": {
+            "uri": "https://s3.amazonaws.com/1000genomes/phase3/data/HG00096/high_coverage_alignment/HG00096.wgs.ILLUMINA.bwa.GBR.high_cov_pcr_free.20140203.bam.bai"
+          }
+        },
+        "sequenceAdapter": {
+          "type": "BgzipFastaAdapter",
+          "fastaLocation": {
+            "uri": "https://jbrowse.org/genomes/hg19/fasta/hg19.fa.gz"
+          },
+          "faiLocation": {
+            "uri": "https://jbrowse.org/genomes/hg19/fasta/hg19.fa.gz.fai"
+          },
+          "gziLocation": {
+            "uri": "https://jbrowse.org/genomes/hg19/fasta/hg19.fa.gz.gzi"
+          }
+        }
+      }
+    },
+    {
+      "type": "AlignmentsTrack",
+      "trackId": "hg00096_lowcov_bam",
+      "name": "HG00096 Illumina low coverage (normal)",
+      "assemblyNames": ["hg19"],
+      "category": ["1000 genomes"],
+      "adapter": {
+        "type": "BamAdapter",
         "bamLocation": {
           "uri": "https://s3.amazonaws.com/1000genomes/phase3/data/HG00096/alignment/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20120522.bam"
         },
